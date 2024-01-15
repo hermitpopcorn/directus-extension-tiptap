@@ -27,7 +27,13 @@ export function useImage(editor: Editor) {
   function imageOpen() {
     imageSelection.value = {};
     if (editor.isActive("image")) {
-      imageSelection.value = editor.getAttributes("image") as ImageAttributes;
+      const attributes = editor.getAttributes("image") as ImageAttributes;
+      imageSelection.value = attributes;
+      if (attributes.id) {
+        openImageTab.value = "media";
+      } else if (attributes.src) {
+        openImageTab.value = "embed";
+      }
     }
 
     imageDrawerOpen.value = true;

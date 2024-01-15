@@ -29,9 +29,10 @@ interface ImageOptions {
 
 export const Image = Node.create<ImageOptions>({
   name: "image",
-  inline: false,
-  group: "block",
+  inline: true,
+  group: "inline",
   draggable: true,
+  selectable: true,
 
   addOptions() {
     return {
@@ -93,10 +94,10 @@ export const Image = Node.create<ImageOptions>({
     if (HTMLAttributes["src"]) {
       return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
     } else {
-    const id = HTMLAttributes["data-directus-id"];
-    const filename = HTMLAttributes["data-directus-filename"];
-    const src = this.options.publicURL + id + (filename ? "/" + filename : "");
-    return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src })];
+      const id = HTMLAttributes["data-directus-id"];
+      const filename = HTMLAttributes["data-directus-filename"];
+      const src = this.options.publicURL + id + (filename ? "/" + filename : "");
+      return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src })];
     }
   },
 

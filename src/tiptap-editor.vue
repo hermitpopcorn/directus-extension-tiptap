@@ -348,6 +348,17 @@
         <icons.Image />
       </v-button>
 
+      <v-button
+        v-if="editorExtensions.includes('video')"
+        v-tooltip="t('wysiwyg_options.media')"
+        small
+        icon
+        :disabled="props.disabled || !editor.can().insertContent({ type: 'video' })"
+        @click="openVideoDrawer"
+      >
+        <icons.Video />
+      </v-button>
+
       <v-emoji-picker
         v-if="editorExtensions.includes('emoji')"
         v-tooltip="t('tiptap.emoji')"
@@ -613,26 +624,26 @@
             <template v-if="imageSelection.id || imageSelection.src">
               <img v-if="imageSelection.id" class="image-preview" :src="`/assets/${imageSelection.id}`" />
               <img v-if="!imageSelection.id && imageSelection.src" class="image-preview" :src="imageSelection.src" />
-          <div class="grid">
-            <div class="field">
-              <div class="type-label">{{ t("fields.directus_files.filename_download") }}</div>
-              <v-input v-model="imageSelection.filename" nullable />
-            </div>
-            <div class="field">
-              <div class="type-label">{{ t("alt_text") }}</div>
-              <v-input v-model="imageSelection.alt" :nullable="false" />
-            </div>
-            <div class="field half">
-              <div class="type-label">{{ t("width") }}</div>
-              <v-input v-model="imageSelection.width" />
-            </div>
-            <div class="field half-right">
-              <div class="type-label">{{ t("height") }}</div>
-              <v-input v-model="imageSelection.height" />
-            </div>
-          </div>
-        </template>
-        <v-upload v-else :multiple="false" from-library from-url @input="imageSelect" />
+              <div class="grid">
+                <div class="field">
+                  <div class="type-label">{{ t("fields.directus_files.filename_download") }}</div>
+                  <v-input v-model="imageSelection.filename" nullable />
+                </div>
+                <div class="field">
+                  <div class="type-label">{{ t("alt_text") }}</div>
+                  <v-input v-model="imageSelection.alt" :nullable="false" />
+                </div>
+                <div class="field half">
+                  <div class="type-label">{{ t("width") }}</div>
+                  <v-input v-model="imageSelection.width" />
+                </div>
+                <div class="field half-right">
+                  <div class="type-label">{{ t("height") }}</div>
+                  <v-input v-model="imageSelection.height" />
+                </div>
+              </div>
+            </template>
+            <v-upload v-else :multiple="false" from-library from-url @input="imageSelect" />
           </v-tab-item>
           <v-tab-item value="embed">
             <div class="grid">
@@ -659,6 +670,30 @@
 
       <template #actions>
         <v-button v-tooltip.bottom="t('save_image')" icon rounded @click="imageSave">
+          <v-icon name="check" />
+        </v-button>
+      </template>
+    </v-drawer>
+
+    <v-drawer v-model="isVideoDrawerOpen" :title="t('wysiwyg_options.media')" icon="video" @cancel="closeVideoDrawer">
+      <div class="content tiptap-drawer">
+        <div class="grid">
+          <div class="field">
+            <div class="type-label">{{ t("url") }}</div>
+            <v-input v-model="videoSelection.src" :placeholder="t('url_placeholder')"></v-input>
+          </div>
+          <div class="field half">
+            <div class="type-label">{{ t("width") }}</div>
+            <v-input v-model="videoSelection.width" />
+          </div>
+          <div class="field half-right">
+            <div class="type-label">{{ t("height") }}</div>
+            <v-input v-model="videoSelection.height" />
+          </div>
+        </div>
+      </div>
+      <template #actions>
+        <v-button v-tooltip.bottom="t('save')" icon rounded @click="saveVideo">
           <v-icon name="check" />
         </v-button>
       </template>
@@ -993,6 +1028,7 @@ import icons from "./icons";
 import { useImage } from "./composables/image";
 import uniqueId from "./extensions/unique-id";
 import emoji from "./extensions/emoji";
+import { useVideo } from "./composables/video";
 
 const { t } = useI18n({ messages });
 
@@ -1080,6 +1116,8 @@ const editorExtensions = editor.extensionManager.extensions.map((ext) => ext.nam
 const { linkDrawerOpen, linkHref, linkTarget, linkOpen, linkClose, linkSave, linkRemove } = useLink(editor);
 
 const { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave, openImageTab } = useImage(editor);
+
+const { isVideoDrawerOpen, videoSelection, openVideoDrawer, closeVideoDrawer, saveVideo } = useVideo(editor);
 
 const textAlignActive = computed(() => {
   return ["left", "center", "right", "justify"].find((align) => editor.isActive({ textAlign: align }));

@@ -581,7 +581,7 @@
     </div>
 
     <v-drawer v-model="linkDrawerOpen" :title="t('wysiwyg_options.link')" icon="link" @cancel="linkClose">
-      <div class="content">
+      <div class="content tiptap-drawer">
         <div class="grid">
           <div class="field">
             <div class="type-label">{{ t("url") }}</div>
@@ -601,7 +601,7 @@
     </v-drawer>
 
     <v-drawer v-model="imageDrawerOpen" :title="t('wysiwyg_options.image')" icon="image" @cancel="imageClose">
-      <div class="content">
+      <div class="content tiptap-drawer">
         <template v-if="imageSelection">
           <img class="image-preview" :src="`/assets/${imageSelection.id}`" />
           <div class="grid">
@@ -635,7 +635,7 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "./styles/mixins/form-grid";
 
 .v-menu-content {
@@ -649,19 +649,18 @@
   }
 }
 
-.v-drawer {
+.content.tiptap-drawer {
+  padding: var(--content-padding);
+  padding-top: 0;
+
   .grid {
     @include form-grid;
-  }
-
-  .content {
-    padding: var(--content-padding);
-    padding-top: 0;
   }
 
   .image-preview,
   .media-preview {
     width: 100%;
+    max-width: 100%;
     height: var(--input-height-tall);
     margin-bottom: 24px;
     object-fit: cover;

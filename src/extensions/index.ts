@@ -17,6 +17,7 @@ import image, { type ImageProps } from "./image";
 import invisibleCharacters from "./invisible-characters";
 import emoji, { type EmojiProps } from "./emoji";
 import uniqueId, { type UniqueIDProps } from "./unique-id";
+import video from "./video";
 
 type ExtensionGroup = "mark" | "node" | "editor";
 
@@ -58,6 +59,7 @@ export const extensionsMeta: ExtensionMeta[] = [
   // nodes
   table,
   image,
+  video,
   task,
   textAlign,
   // editor

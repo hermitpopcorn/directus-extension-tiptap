@@ -601,9 +601,18 @@
     </v-drawer>
 
     <v-drawer v-model="imageDrawerOpen" :title="t('wysiwyg_options.image')" icon="image" @cancel="imageClose">
+      <template #sidebar>
+        <v-tabs v-model="openImageTab" vertical>
+          <v-tab value="media">{{ t("media") }}</v-tab>
+          <v-tab value="embed">{{ t("embed") }}</v-tab>
+        </v-tabs>
+      </template>
       <div class="content tiptap-drawer">
-        <template v-if="imageSelection">
-          <img class="image-preview" :src="`/assets/${imageSelection.id}`" />
+        <v-tabs-items v-model="openImageTab">
+          <v-tab-item value="media">
+            <template v-if="imageSelection.id || imageSelection.src">
+              <img v-if="imageSelection.id" class="image-preview" :src="`/assets/${imageSelection.id}`" />
+              <img v-if="!imageSelection.id && imageSelection.src" class="image-preview" :src="imageSelection.src" />
           <div class="grid">
             <div class="field">
               <div class="type-label">{{ t("fields.directus_files.filename_download") }}</div>
@@ -624,6 +633,28 @@
           </div>
         </template>
         <v-upload v-else :multiple="false" from-library from-url @input="imageSelect" />
+          </v-tab-item>
+          <v-tab-item value="embed">
+            <div class="grid">
+              <div class="field">
+                <div class="type-label">{{ t("url") }}</div>
+                <v-input v-model="imageSelection.src" :placeholder="t('url_placeholder')"></v-input>
+              </div>
+              <div class="field">
+                <div class="type-label">{{ t("alt_text") }}</div>
+                <v-input v-model="imageSelection.alt" :nullable="false" />
+              </div>
+              <div class="field half">
+                <div class="type-label">{{ t("width") }}</div>
+                <v-input v-model="imageSelection.width" />
+              </div>
+              <div class="field half-right">
+                <div class="type-label">{{ t("height") }}</div>
+                <v-input v-model="imageSelection.height" />
+              </div>
+            </div>
+          </v-tab-item>
+        </v-tabs-items>
       </div>
 
       <template #actions>
@@ -1048,7 +1079,7 @@ const editorExtensions = editor.extensionManager.extensions.map((ext) => ext.nam
 
 const { linkDrawerOpen, linkHref, linkTarget, linkOpen, linkClose, linkSave, linkRemove } = useLink(editor);
 
-const { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave } = useImage(editor);
+const { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave, openImageTab } = useImage(editor);
 
 const textAlignActive = computed(() => {
   return ["left", "center", "right", "justify"].find((align) => editor.isActive({ textAlign: align }));

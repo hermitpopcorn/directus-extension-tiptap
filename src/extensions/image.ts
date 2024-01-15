@@ -2,14 +2,15 @@ import type { ExtensionMeta } from "./index";
 import { mergeAttributes, Node } from "@tiptap/core";
 import { getPublicURL } from "../utils/get-root-path";
 
-interface ImageAttributes {
-  id: string;
+export type ImageAttributes = {
+  id?: string;
+  src?: string;
   alt?: string;
   filename?: string;
   width?: string;
   height?: string;
   title?: string;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -50,6 +51,9 @@ export const Image = Node.create<ImageOptions>({
           };
         },
       },
+      src: {
+        default: null,
+      },
       alt: {
         default: null,
       },
@@ -80,16 +84,20 @@ export const Image = Node.create<ImageOptions>({
   parseHTML() {
     return [
       {
-        tag: "img[data-directus-id]",
+        tag: "img",
       },
     ];
   },
 
   renderHTML({ HTMLAttributes }) {
+    if (HTMLAttributes["src"]) {
+      return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+    } else {
     const id = HTMLAttributes["data-directus-id"];
     const filename = HTMLAttributes["data-directus-filename"];
     const src = this.options.publicURL + id + (filename ? "/" + filename : "");
     return ["img", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src })];
+    }
   },
 
   addCommands() {

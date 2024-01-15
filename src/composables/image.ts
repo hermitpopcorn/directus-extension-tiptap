@@ -14,20 +14,22 @@ export function useImage(editor: Editor) {
    */
   const imageDrawerOpen = ref(false);
 
+  const openImageTab = ref("media");
+
   /**
    * Image selection.
    */
-  const imageSelection = ref<ImageAttributes | null>(null);
+  const imageSelection = ref<ImageAttributes>({});
 
   /**
    * Opens the image selector and sets the value of the image selection.
    */
   function imageOpen() {
+    imageSelection.value = {};
     if (editor.isActive("image")) {
       imageSelection.value = editor.getAttributes("image") as ImageAttributes;
-    } else {
-      imageSelection.value = null;
     }
+
     imageDrawerOpen.value = true;
   }
 
@@ -36,7 +38,7 @@ export function useImage(editor: Editor) {
    */
   function imageClose() {
     imageDrawerOpen.value = false;
-    imageSelection.value = null;
+    imageSelection.value = {};
   }
 
   /**
@@ -64,5 +66,5 @@ export function useImage(editor: Editor) {
     };
   }
 
-  return { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave };
+  return { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave, openImageTab };
 }

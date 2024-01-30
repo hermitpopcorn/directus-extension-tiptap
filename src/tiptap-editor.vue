@@ -359,6 +359,17 @@
         <icons.Video />
       </v-button>
 
+      <v-button
+        v-if="editorExtensions.includes('youtube')"
+        v-tooltip="t('wysiwyg_options.media')"
+        small
+        icon
+        :disabled="props.disabled || !editor.can().insertContent({ type: 'iframe' })"
+        @click="openEmbedYouTubeDrawer"
+      >
+        <icons.YouTube />
+      </v-button>
+
       <v-emoji-picker
         v-if="editorExtensions.includes('emoji')"
         v-tooltip="t('tiptap.emoji')"
@@ -698,6 +709,30 @@
         </v-button>
       </template>
     </v-drawer>
+
+    <v-drawer v-model="isEmbedYouTubeDrawerOpen" :title="t('wysiwyg_options.media')" icon="youtube" @cancel="closeEmbedYouTubeDrawer">
+      <div class="content tiptap-drawer">
+        <div class="grid">
+          <div class="field">
+            <div class="type-label">{{ t("url") }}</div>
+            <v-input v-model="embedYouTubeSelection.src" :placeholder="t('url_placeholder')"></v-input>
+          </div>
+          <div class="field half">
+            <div class="type-label">{{ t("width") }}</div>
+            <v-input v-model="embedYouTubeSelection.width" />
+          </div>
+          <div class="field half-right">
+            <div class="type-label">{{ t("height") }}</div>
+            <v-input v-model="embedYouTubeSelection.height" />
+          </div>
+        </div>
+      </div>
+      <template #actions>
+        <v-button v-tooltip.bottom="t('save')" icon rounded @click="saveYouTubeEmbed">
+          <v-icon name="check" />
+        </v-button>
+      </template>
+    </v-drawer>
   </div>
 </template>
 
@@ -1033,6 +1068,7 @@ import { useImage } from "./composables/image";
 import uniqueId from "./extensions/unique-id";
 import emoji from "./extensions/emoji";
 import { useVideo } from "./composables/video";
+import { useYouTube } from "./composables/youtube";
 
 const { t } = useI18n({ messages });
 
@@ -1122,6 +1158,14 @@ const { linkDrawerOpen, linkHref, linkTarget, linkOpen, linkClose, linkSave, lin
 const { imageDrawerOpen, imageSelection, imageSelect, imageOpen, imageClose, imageSave, openImageTab } = useImage(editor);
 
 const { isVideoDrawerOpen, videoSelection, openVideoDrawer, closeVideoDrawer, saveVideo } = useVideo(editor);
+
+const {
+  isEmbedYouTubeDrawerOpen,
+  embedYouTubeSelection,
+  openEmbedYouTubeDrawer,
+  closeEmbedYouTubeDrawer,
+  saveYouTubeEmbed,
+} = useYouTube(editor);
 
 const textAlignActive = computed(() => {
   return ["left", "center", "right", "justify"].find((align) => editor.isActive({ textAlign: align }));

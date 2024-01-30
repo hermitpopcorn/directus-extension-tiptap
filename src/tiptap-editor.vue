@@ -807,6 +807,10 @@
     background-color: var(--theme--form--field--input--background-subdued);
     border-bottom: var(--theme--border-width) solid var(--theme--form--field--input--border-color);
 
+    position: sticky;
+    top: 60px;
+    z-index: 1;
+
     .v-button + .v-button {
       margin-left: 2px;
     }
